@@ -4,17 +4,26 @@ if(Meteor.isClient){
   };
 
   Template.hello.rendered = function(){
-    Session.set('peep', 'No user selected');
     this.maestro.start();
+    Tracker.autorun(function(){
+      console.log('recomputing');
+      var test = '';
+      var timer = setInterval(function(){console.log('hey'); test = 'test'}, 1000);
+    });
   };
 
   Template.hello.destroyed = function(){
     this.maestro.stop();
+    delete this.maestro;
   };
 
   Template.hello.helpers({
     person: function(){ return Session.get('peep'); },
     mood: function(){ return 'IS ' + Template.instance().maestro.mood.get(); }
+  });
+
+  Template.hello.events({
+
   });
 
   var MeteorMaestro = (function(){
@@ -28,8 +37,8 @@ if(Meteor.isClient){
     }
 
     function stopGenerator(){
-      clearInterval(peepInterval);
-    }
+      clearInterval(peepInterval); 
+    } 
 
     function setRandomPeep(){
       Session.set('peep', getRandomPeep());
